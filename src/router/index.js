@@ -44,7 +44,8 @@ const verifyRouteAuthority = async (to, from, next) => {
         } })
         store.dispatch('setRights', res.data);
       } else {
-        // TODO:1.1.2 如果是非当页刷新，则跳转到首页---进到这个函数里面时一定登陆过
+        // 1.1.2 如果是非当页刷新，则跳转到首页---进到这个函数里面时一定登陆过
+        // tips: 使用了sesstionStorage才会走进来这里,跨标签页数据不会共享,而localStorage一定能取到值,也就没必要区分
         next({ path: '/home' });
         return true;
       }

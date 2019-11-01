@@ -22,6 +22,8 @@ export default {
   methods: {
     logout() {
       window.localStorage.removeItem('userId')
+      // 退出登录清除store
+      this.$store.dispatch('setRights',null)
       this.$router.push('/login')
     }
   }
