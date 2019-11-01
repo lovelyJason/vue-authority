@@ -18,6 +18,7 @@ export default {
   methods: {
     login() {
       window.localStorage.setItem('userId','admin')
+      // window.sessionStorage.setItem('userId','admin')
       this.$router.push('/home')
     }
   }

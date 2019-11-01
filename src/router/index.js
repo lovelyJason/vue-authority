@@ -11,7 +11,7 @@ Vue.use(Router)
 
 var router = new Router({
   routes: [
-    { path: '/', redirect: { name: 'home' } },
+    // { path: '/', redirect: { name: 'home' } },
     { path: '/home', name: 'home', component: Home },
     { path: '/login', name: 'login', component: Login },
     { path: '/exam1', name: 'exam1', component: Exam1, props: { authorityId: 200 } },
@@ -30,19 +30,21 @@ const verifyRouteAuthority = async (to, from, next) => {
     // 获取vuex中存储权限信息的模块，authority为该模块名
     const authorityState = store.state;
     console.log(authorityState.rights)
-    // 1.1 先解决刷新的问题以便1.2判断权限  为null的场景： 从空tab或别的网站进入到eod（如输入url、sso登录跳转过来）；刷新页面；
+    // 1.1 先解决刷新的问题以便1.2判断权限  为null的场景： 从空tab或别的网站进入到eod（如输入url、sso登录跳转过来）；刷新页面或第一次打开页面；
+    //  如果是刷新了导致存储的权限路由配置信息没了，则要重新请求获取权限，判断刷新页是否拥有权限
     if (authorityState.rights === null) {
-      const userId = localStorage.getItem('userId');
-      //  如果是刷新了导致存储的权限路由配置信息没了，则要重新请求获取权限，判断刷新页是否拥有权限
+      const userId = window.localStorage.getItem('userId');
+      // const userId = window.sessionStorage.getItem('userId');
+      console.log('usrId:',userId)
+      // 1.1.1 当前页刷新
       if (userId) {
-        console.log('有userId')
         // 重新获取权限，以下为例子
         const res = await axios.get('http://127.0.0.1:1234/login',{ params: {
           router: to.name
         } })
         store.dispatch('setRights', res.data);
-        console.log(store.getters.rights)
-      } else { // TODO:如果是非当页刷新，则跳转到首页---进到这个函数里面时一定登陆过
+      } else {
+        // TODO:1.1.2 如果是非当页刷新，则跳转到首页---进到这个函数里面时一定登陆过
         next({ path: '/home' });
         return true;
       }
@@ -66,6 +68,7 @@ const enterRoute = async (to, from, next) => {
   if (to.path != '/login') {
     // 判断是否存在  token
     if (!window.localStorage.getItem('userId')) {
+    // if (!window.sessionStorage.getItem('userId')) {
       router.push('/login')
       return
     } else {
@@ -91,8 +94,10 @@ const enterRoute = async (to, from, next) => {
 };
 
 router.beforeEach((to, from, next) => {
+  console.log(to,from)
   // 无匹配路由
   if (to.matched.length === 0) {
+    console.log('无匹配路由')
     // 跳转到首页 添加query，避免手动跳转丢失参数，例如token
     next({
       path: '/',
