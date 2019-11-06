@@ -17,6 +17,9 @@ export default {
   },
   methods: {
     login() {
+      this.$http.get('/login').then( res => {
+        console.log(res)
+      })
       window.localStorage.setItem('userId','admin')
       // window.sessionStorage.setItem('userId','admin')
       this.$router.push('/home')

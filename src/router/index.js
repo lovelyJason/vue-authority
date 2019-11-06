@@ -11,7 +11,7 @@ Vue.use(Router)
 
 var router = new Router({
   routes: [
-    // { path: '/', redirect: { name: 'home' } },
+    { path: '/', redirect: { name: 'home' } },
     { path: '/home', name: 'home', component: Home },
     { path: '/login', name: 'login', component: Login },
     { path: '/exam1', name: 'exam1', component: Exam1, props: { authorityId: 200 } },
@@ -101,7 +101,7 @@ router.beforeEach((to, from, next) => {
     console.log('无匹配路由')
     // 跳转到首页 添加query，避免手动跳转丢失参数，例如token
     next({
-      path: '/',
+      path: '/home',  // 要存在此路由,否则无限循环
       query: to.query
     });
     return;
