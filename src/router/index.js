@@ -36,7 +36,7 @@ const verifyRouteAuthority = async (to, from, next) => {
       const userId = window.localStorage.getItem('userId');
       // const userId = window.sessionStorage.getItem('userId');
       console.log('usrId:',userId)
-      // 1.1.1 当前页刷新
+      // 1.1.1 当前页刷新或登录后第一次进入该页面
       if (userId) {
         // 重新获取权限，以下为例子
         const res = await axios.get('http://127.0.0.1:1234/login',{ params: {
